@@ -1,8 +1,8 @@
-﻿using RestWithASPNET10.Configurations;
-using RestWithASPNET10.Repositories;
-using RestWithASPNET10.Repositories.Impl;
-using RestWithASPNET10.Services;
-using RestWithASPNET10.Services.Impl;
+﻿using BooksWeb.Model.Context;
+using BooksWeb.Repositories;
+using BooksWeb.Repositories.Impl;
+using BooksWeb.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +15,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDataBaseConfiguration(builder.Configuration);
-builder.Services.AddEvolveConfiguration(builder.Configuration, builder.Environment);
+builder.Services.AddDbContext<SQLContext>(options =>
+{
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("SqlServer")
+        );
+});
 
-builder.Services.AddScoped<IBooksServices, BooksServicesImpl>();
+builder.Services.AddScoped<IBooksService, BooksService>();
 builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 
 
